@@ -5,33 +5,33 @@ const Category = () => {
   return (
     <Container>
       <Wrap>
-        <img src='./images/viewers-disney.png' alt="disney" />
+        <img src={`${process.env.PUBLIC_URL}/images/viewers-disney.png`} alt="disney" />
         <video loop muted autoPlay>
-          <source src="./videos/disney.mp4" type="video/mp4"></source>
+          <source src={`${process.env.PUBLIC_URL}/videos/disney.mp4`} type="video/mp4"></source>
         </video>
       </Wrap>
       <Wrap>
-        <img src='./images/viewers-marvel.png' alt="marvel" />
+        <img src={`${process.env.PUBLIC_URL}/images/viewers-marvel.png`} alt="marvel" />
         <video loop muted autoPlay>
-          <source src="./videos/marvel.mp4" type="video/mp4"></source>
+          <source src={`${process.env.PUBLIC_URL}/videos/marvel.mp4`} type="video/mp4"></source>
         </video>
       </Wrap>
       <Wrap>
-        <img src='./images/viewers-pixar.png' alt="pixar" />
+        <img src={`${process.env.PUBLIC_URL}/images/viewers-pixar.png`} alt="pixar" />
         <video loop muted autoPlay>
-          <source src="./videos/pixar.mp4" type="video/mp4"></source>
+          <source src={`${process.env.PUBLIC_URL}/videos/pixar.mp4`} type="video/mp4"></source>
         </video>
       </Wrap>
       <Wrap>
-        <img src='./images/viewers-starwars.png' alt="starwars" />
+        <img src={`${process.env.PUBLIC_URL}/images/viewers-starwars.png`} alt="starwars" />
         <video loop muted autoPlay>
-          <source src="./videos/star-wars.mp4" type="video/mp4"></source>
+          <source src={`${process.env.PUBLIC_URL}/videos/star-wars.mp4`} type="video/mp4"></source>
         </video>
       </Wrap>
       <Wrap>
-        <img src='./images/viewers-national.png' alt="national-geographic" />
+        <img src={`${process.env.PUBLIC_URL}/images/viewers-national.png`} alt="national-geographic" />
         <video loop muted autoPlay>
-          <source src="./videos/national-geographic.mp4" type="video/mp4"></source>
+          <source src={`${process.env.PUBLIC_URL}/videos/national-geographic.mp4`} type="video/mp4"></source>
         </video>
       </Wrap>
     </Container>
