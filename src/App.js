@@ -26,7 +26,7 @@ const Container = styled.main`
 
   &:after {
     content: "";
-    background: url('/images/home-background.png') no-repeat center / cover fixed;
+    background: url('../images/home-background.png') no-repeat center / cover fixed;
     position: absolute;
     inset: 0;
     z-index: -1;
