@@ -31,10 +31,7 @@ const SearchPage = () => {
   if (setSearchResults.length > 0) {
     return (
       <section className='search-container'>
-        {searchResults.map((movie) => {
-          console.log(movie)
-          // if(movie.backdrop_path)
-        })}
+        
       </section>
     )
   } else {
