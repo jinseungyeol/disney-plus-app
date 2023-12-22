@@ -1,34 +1,34 @@
-import styled from 'styled-components';
 import './App.css';
+import { Outlet, Route, Routes } from 'react-router-dom';
 import Nav from './components/Nav';
-import Banner from './components/Banner';
-import Category from './components/Category';
+import LoginPage from './pages/LoginPage';
+import MainPage from './pages/MainPage';
+import SearchPage from './pages/SearchPage';
+import DetailPage from './pages/DetailPage';
+
+const Layout = () => {
+  return (
+    <div>
+      <Nav />
+
+      <Outlet />
+    </div>
+  )
+}
 
 function App() {
   return (
-    <Container >
-      <Nav />
-      <Banner />
-      <Category />
-    </Container>
+    <div className='app'>
+      <Routes>
+        <Route path='/' element={<Layout />}>
+          <Route index element={<LoginPage />} />
+          <Route path='main' element={<MainPage />} />
+          <Route path=':movieId' element={<DetailPage />} />
+          <Route path='search' element={<SearchPage />} />
+        </Route>
+      </Routes>
+    </div>
   );
 }
 
 export default App;
-
-const Container = styled.main`
-  position: relative;
-  min-height: calc(100vh - 250px);
-  overflow-x: hidden;
-  display: block;
-  top: 72px;
-  padding: 0 calc(3.5vw + 5px);
-
-  &:after {
-    content: "";
-    background: url('../images/home-background.png') no-repeat center / cover fixed;
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-  }
-`

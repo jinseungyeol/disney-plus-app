@@ -1,0 +1,21 @@
+.slider {position: relative;}
+.slider__arrow-left {visibility: hidden; display: flex; align-items: center; justify-content: center; width: 80px; position: absolute; left: 0; top: 0; height: 100%; background-clip: content-box; padding: 20px 0; box-sizing: border-box; transition: .35s; cursor: pointer; z-index: 1000;}
+.slider__arrow-right {visibility: hidden; display: flex; align-items: center; justify-content: center; width: 80px; position: absolute; right: 0; top: 0; height: 100%; background-clip: content-box; padding: 20px 0; box-sizing: border-box; transition: .35s; cursor: pointer; z-index: 1000;}
+.arrow {transition: .35s;}
+.arrow:hover {transform: scale(1.5);}
+.slider:hover .slider__arrow-left {visibility: visible;}
+.slider:hover .slider__arrow-right {visibility: visible;}
+.slider__arrow-left:hover {background: rgba(20, 20, 20, 0.5);}
+.slider__arrow-right:hover {background: rgba(20, 20, 20, 0.5);}
+.row__posters {overflow-y: hidden; overflow-x: scroll; display: flex; padding: 20px 0 20px 20px; scroll-behavior: smooth;}
+.row__posters::-webkit-scrollbar {display: none;}
+.row__poster {object-fit: contain; width: 100%; max-height: 144px; margin-right: 10px; transition: .35s; border-radius: 4px;}
+.row__poster:hover {transform: scale(1.08);}
+
+@media screen and (min-width: 1200px) {
+  .row__poster {max-height: 160px;}
+}
+
+@media screen and (max-width: 768px) {
+  .row__poster {max-height: 280px;}
+}

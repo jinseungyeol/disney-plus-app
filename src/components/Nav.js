@@ -1,25 +1,35 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import { useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 const Nav = () => {
 
-  const [show, setShow] = useState(false)
+  const [show, setShow] = useState(false);
+  const { pathname } = useLocation();
+  const [searchValue, setSearchValue] = useState("");
+  const navigate = useNavigate();
+  
 
   useEffect(() => {
-    window.addEventListener('scroll', () => { 
-      if (window.scrollY > 50) {
-        setShow(true)
-      } else {
-        setShow(false)
-      }
-    })
-  
+    window.addEventListener('scroll', () => handleScroll())
     return () => {
-      window.removeEventListener('scroll', () => {})
+      window.removeEventListener('scroll', () => handleScroll())
     }
   }, [])
-  
 
+  const handleScroll = () => {
+    if (window.scrollY > 50) {
+      setShow(true)
+    } else {
+      setShow(false)
+    }
+  }
+
+  const handleChange = (e) => { 
+    setSearchValue(e.target.value);
+    navigate(`/search?q=${e.target.value}`)
+  }
+  
   return (
     <NavWrapper $show={show}>
       <Logo href={`${process.env.PUBLIC_URL}`}>
@@ -28,12 +38,49 @@ const Nav = () => {
           src={`${process.env.PUBLIC_URL}/images/logo.svg`}
           onClick={() => window.location.href = "/"}
         />
+
       </Logo>
+
+      {pathname === '/' ?
+        (<Login>LOGIN</Login>) :
+        <Input
+          value={searchValue}
+          onChange={handleChange}
+          className='nav__input'
+          type='text'
+          placeholder='검색해주세요.'
+        />}
     </NavWrapper>
   )
 }
 
 export default Nav
+
+const Login = styled.a`
+  background: rgba(0,0,0,0.6);
+  padding: 8px 16px;
+  letter-spacing: 1.5px;
+  border: 1px solid #f9f9f9;
+  transition: .35s;
+  cursor: pointer;
+
+  &:hover {
+    background: #f9f9f9;
+    color: gray;
+    border-color: transparent;
+  }
+`;
+
+const Input = styled.input`
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background: rgba(0,0,0,0.582);
+  border-radius: 5px;
+  color: #fff;
+  padding: 5px;
+  border: none;
+`;
 
 const NavWrapper = styled.nav`
   position: fixed;
