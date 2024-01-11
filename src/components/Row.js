@@ -3,6 +3,16 @@ import React, { useCallback, useEffect, useState } from 'react'
 import './Row.css'
 import MovieModal from './MovieModal';
 
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import styled from 'styled-components';
+
 const Row = ({ title, id, fetchUrl }) => {
 
   const [movies, setMovies] = useState([])
@@ -24,39 +34,48 @@ const Row = ({ title, id, fetchUrl }) => {
   }
   
   return (
-    <div>
+    <Container>
       <h2>{title}</h2>
-      <div className='slider'>
-        <div className='slider__arrow-left'>
-          <span className='arrow'
-            onClick={() => {
-              document.getElementById(id).scrollLeft -= window.innerWidth - 80
-            }}
-          >
-            {"<"}
-          </span>
-        </div>
-        <div id={id} className='row__posters'>
+      <Swiper
+        //install Swiper modules
+        modules={[Navigation, Pagination, Scrollbar, A11y]}
+        loop={true} //loop 기능 사용여부
+        navigation //arrow 버튼 사용여부
+        pagination={{ clickable: true }} //페이지버튼 사용여부
+        breakpoints={{
+          1378: {
+            slidesPerView: 6, //1번에 보이는 슬라이드 개수
+            slidesPerGroup: 6
+          },
+          998: {
+            slidesPerView: 5, //1번에 보이는 슬라이드 개수
+            slidesPerGroup: 5
+          },
+          625: {
+            slidesPerView: 4, //1번에 보이는 슬라이드 개수
+            slidesPerGroup: 4
+          },
+          0: {
+            slidesPerView: 3, //1번에 보이는 슬라이드 개수
+            slidesPerGroup: 3
+          },
+        }}
+      >
+        <Content id={id}>
           {movies.map(movie => (
-            <img
-              key={movie.id}
-              className='row__poster'
-              src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
-              alt={movie.name}
-              onClick={() => handleClick(movie)}
-            />
+            <SwiperSlide>
+              <Wrap>
+                <img
+                  key={movie.id}
+                  src={`https://image.tmdb.org/t/p/original/${movie.backdrop_path}`}
+                  alt={movie.name}
+                  onClick={() => handleClick(movie)}
+                />
+              </Wrap>
+            </SwiperSlide>
           ))}
-        </div>
-        <div className='slider__arrow-right'>
-          <span className='arrow'
-            onClick={() => {
-              document.getElementById(id).scrollLeft += window.innerWidth - 80
-            }}
-          >
-            {">"}
-          </span>
-        </div>
-      </div>
+        </Content>
+      </Swiper>
 
       {modalOpen &&
         <MovieModal
@@ -64,8 +83,45 @@ const Row = ({ title, id, fetchUrl }) => {
           setModalOpen={setModalOpen}
         />
       }
-    </div>
+    </Container>
   )
 }
 
 export default Row
+
+const Container = styled.div`
+  padding: 0 0 26px;
+`;
+
+const Content = styled.div``;
+
+const Wrap = styled.div`
+  width: 95%;
+  height: 95%;
+  padding-top: 56.25%;
+  box-shadow: rgb(0 0 0/69%) 0 26px 30px -10px,
+              rgb(0 0 0/73%) 0 16px 10px -10px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  transition: all .25s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+  border: 3px solid rgba(249, 249, 249, 0.1);
+
+  img {
+    inset: 0;
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    opacity: 1;
+    position: absolute;
+    width: 100%;
+    transition: opacity .5s ease-in-out;
+    z-index: 1;
+  }
+  &:hover {
+    box-shadow: rgb(0 0 0 / 80%) 0 40px 58px -16px,
+                rgb(0 0 0 /72%) 0 30px 22px -10px;
+    transform: scale(0.98);
+    border-color: rgba(249, 249, 249, 0.8);
+  }
+`;
