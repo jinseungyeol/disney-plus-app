@@ -20,6 +20,7 @@ function App() {
   return (
     <div className='app'>
       <Routes>
+        {/* 이 부분이 Outlet으로 처리됨 */}
         <Route path='/' element={<Layout />}>
           <Route index element={<LoginPage />} />
           <Route path='main' element={<MainPage />} />
