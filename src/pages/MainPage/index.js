@@ -32,7 +32,7 @@ const Container = styled.main`
 
   &:after {
     content: "";
-    background: url('../images/home-background.png') no-repeat center / cover fixed;
+    background: url('${process.env.PUBLIC_URL}/images/home-background.png') no-repeat center / cover fixed;
     position: absolute;
     inset: 0;
     z-index: -1;

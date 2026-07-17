@@ -1,5 +1,6 @@
 {
   "name": "disney-plus-app",
+  "homepage": "https://jinseungyeol.github.io/disney-plus-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

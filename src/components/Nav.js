@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+} from "firebase/auth";
 
 const Nav = () => {
-
-  const initialUserData = localStorage.getItem('userData') ?
-  JSON.parse(localStorage.getItem('userData')) : {};
-
   const [show, setShow] = useState(false);
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
-  const [userData, setUserData] = useState(initialUserData);
-  
-  useEffect(() => {
+  const inputRef = useRef(null);
+  const [cursorPosition, setCursorPosition] = useState(0);
 
+  useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       // console.log(user)
       if (user) {
@@ -28,133 +29,94 @@ const Nav = () => {
         navigate("/");
       }
     });
+  }, []);
 
-  }, [auth, navigate, pathname])
-  
+  // URL의 쿼리 파라미터에서 검색어를 읽어와서 input 값과 동기화
+  useEffect(() => {
+    const queryParams = new URLSearchParams(search);
+    const urlSearchTerm = queryParams.get("q");
+    if (urlSearchTerm !== null && urlSearchTerm !== searchValue) {
+      setSearchValue(urlSearchTerm);
+      setCursorPosition(urlSearchTerm.length);
+    }
+  }, [search]);
 
   useEffect(() => {
-    window.addEventListener('scroll', () => handleScroll())
+    window.addEventListener("scroll", () => handleScroll());
     return () => {
-      window.removeEventListener('scroll', () => handleScroll())
-    }
-  }, [])
+      window.removeEventListener("scroll", () => handleScroll());
+    };
+  }, []);
 
   const handleScroll = () => {
     if (window.scrollY > 50) {
-      setShow(true)
+      setShow(true);
     } else {
-      setShow(false)
+      setShow(false);
     }
-  }
+  };
 
-  const handleChange = (e) => { 
-    setSearchValue(e.target.value);
-    navigate(`/search?q=${e.target.value}`)
-  }
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    const newPosition = e.target.selectionStart;
+    setSearchValue(newValue);
+    setCursorPosition(newPosition);
+    // replace를 사용하여 브라우저 히스토리에 쌓이지 않게 하고, 컴포넌트 리렌더링 최소화
+    navigate(`/search?q=${newValue}`, { replace: true });
+  };
+
+  // 컴포넌트가 리렌더링된 후 input에 포커스 복원 (커서 위치 유지)
+  useEffect(() => {
+    if (inputRef.current && pathname === "/search") {
+      inputRef.current.focus();
+      // 저장된 커서 위치로 복원
+      const position = Math.min(cursorPosition, inputRef.current.value.length);
+      inputRef.current.setSelectionRange(position, position);
+    }
+  }, [pathname, searchValue]);
 
   const handleAuth = () => {
     signInWithPopup(auth, provider)
-      .then(result => { 
-        //userData 넣어주기
-        setUserData(result.user);
-        localStorage.setItem('userData', JSON.stringify(result.user));
-      })
-      .catch(error => {
+      .then((result) => {})
+      .catch((error) => {
         console.log(error);
-      })
-  }
+      });
+  };
 
-  const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        setUserData({}); // 로그아웃 시 정보 없애줌
-        navigate('/');
-      })
-      .catch((error) => { 
-        console.log(error) 
-      })
-  }
-  
   return (
     <NavWrapper $show={show}>
       <Logo>
         <img
           alt="Disney Plus Logo"
-          src={`./images/logo.svg`}
-          onClick={() => window.location.href = "/"}
+          src={`${process.env.PUBLIC_URL}/images/logo.svg`}
+          onClick={() => (window.location.href = `${process.env.PUBLIC_URL}/`)}
         />
-
       </Logo>
 
-      {pathname === '/' ?
-        (<Login onClick={handleAuth}>LOGIN</Login>) :
-        <>
-          <Input
-            value={searchValue}
-            onChange={handleChange}
-            className='nav__input'
-            type='text'
-            placeholder='검색해주세요.'
-          />
-          
-          <SignOut>
-            <UserImg src={userData.photoURL} alt={userData.displayName}/>
-            <DropDown onClick={handleSignOut}>
-              <span>Sign Out</span>
-            </DropDown>
-          </SignOut>
-        </>
-      }
+      {pathname === "/" ? (
+        <Login onClick={handleAuth}>LOGIN</Login>
+      ) : (
+        <Input
+          ref={inputRef}
+          value={searchValue}
+          onChange={handleChange}
+          className="nav__input"
+          type="text"
+          placeholder="검색해주세요."
+        />
+      )}
     </NavWrapper>
-  )
-}
+  );
+};
 
-export default Nav
-
-const DropDown = styled.div`
-  position: absolute;
-  top: 48px;
-  right: 0;
-  background: rgb(19, 19, 19);
-  border: 1px solid rgba(151, 151, 151, 0.34);
-  border-radius: 4px;
-  box-shadow: rgb(0 0 0 / 50%); 0 0 18px 0;
-  padding: 10px;
-  font-size: 14px;
-  letter-spacing: 3px;
-  width: 100%;
-  opacity: 0;
-  transition: .3s;
-`;
-
-const SignOut = styled.div`
-  position: relative;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    ${DropDown} {
-      opacity: 1;
-    }
-  }
-`;
-
-const UserImg = styled.img`
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
-`; 
+export default Nav;
 
 const Login = styled.a`
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   padding: 8px 16px;
   letter-spacing: 1.5px;
   border: 1px solid #f9f9f9;
-  transition: .35s;
+  transition: 0.35s;
   cursor: pointer;
 
   &:hover {
@@ -168,11 +130,17 @@ const Input = styled.input`
   position: fixed;
   left: 50%;
   transform: translate(-50%, 0);
-  background: rgba(0,0,0,0.582);
+  background: rgba(0, 0, 0, 0.582);
   border-radius: 5px;
   color: #fff;
   padding: 5px;
   border: none;
+
+  @media (max-width: 1023px) {
+    left: unset;
+    transform: initial;
+    right: calc(3.5vw + 5px);
+  }
 `;
 
 const NavWrapper = styled.nav`
@@ -181,14 +149,14 @@ const NavWrapper = styled.nav`
   left: 0;
   right: 0;
   height: 70px;
-  background: ${props => props.$show ? '#090b13' : 'transparent'};
+  background: ${(props) => (props.$show ? "#090b13" : "transparent")};
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 36px;
+  padding: 0 calc(3.5vw + 5px);
   letter-spacing: 16px;
   z-index: 3;
-  transition: .35s;
+  transition: 0.35s;
 `;
 
 const Logo = styled.a`
