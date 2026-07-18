@@ -36,6 +36,9 @@ const Row = ({ title, id, fetchUrl }) => {
   return (
     <Container>
       <h2>{title}</h2>
+      {/* 슬라이드 0개로 초기화되면 loop 상태가 깨져 네비게이션 화살표가 먹통이 되므로,
+          영화 데이터가 도착한 뒤에 Swiper를 마운트한다 */}
+      {movies.length > 0 &&
       <Swiper
         //install Swiper modules
         modules={[Navigation, Pagination, Scrollbar, A11y]}
@@ -76,6 +79,7 @@ const Row = ({ title, id, fetchUrl }) => {
           ))}
         </Content>
       </Swiper>
+      }
 
       {modalOpen &&
         <MovieModal
