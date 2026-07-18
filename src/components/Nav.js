@@ -18,18 +18,25 @@ const Nav = () => {
   const inputRef = useRef(null);
   const [cursorPosition, setCursorPosition] = useState(0);
 
+  // pathname을 의존성에 넣어 라우트가 바뀔 때마다(뒤로가기 포함) 현재 로그인
+  // 상태 기준으로 리다이렉트한다. onAuthStateChanged는 구독 시점에 현재 상태로
+  // 즉시 한 번 발화하므로, 로그인된 채 "/"로 돌아와도 /main으로 보내진다.
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      // console.log(user)
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         if (pathname === "/") {
-          navigate("/main");
+          navigate("/main", { replace: true });
         }
       } else {
-        navigate("/");
+        if (pathname !== "/") {
+          navigate("/", { replace: true });
+        }
       }
     });
-  }, []);
+    return () => {
+      unsubscribe();
+    };
+  }, [pathname]);
 
   // URL의 쿼리 파라미터에서 검색어를 읽어와서 input 값과 동기화
   useEffect(() => {
@@ -77,7 +84,11 @@ const Nav = () => {
 
   const handleAuth = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {})
+      .then((result) => {
+        // 이미 로그인된 계정을 다시 선택하면 auth 상태가 "변경"되지 않아
+        // onAuthStateChanged가 발화하지 않을 수 있으므로 여기서 직접 이동한다
+        navigate("/main", { replace: true });
+      })
       .catch((error) => {
         console.log(error);
       });
